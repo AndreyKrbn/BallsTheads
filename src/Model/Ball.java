@@ -1,11 +1,18 @@
 package Model;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.util.Duration;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import static java.lang.Math.random;
 
 enum BallColor{
     BLUE,
@@ -54,8 +61,21 @@ public class Ball {
     }
 
     public void AnimationMove(){
-        circle.setCenterX(FieldX());
-        circle.setCenterY(FieldY());
+/*        circle.setCenterX(FieldX());
+        circle.setCenterY(FieldY());*/
+        Timeline timeline = new Timeline();
+        timeline.setCycleCount(1);
+
+        KeyValue kvx = new KeyValue(circle.centerXProperty(), FieldX());
+        KeyFrame kfx = new KeyFrame(Duration.millis(90), kvx);
+        timeline.getKeyFrames().add(kfx);
+
+        KeyValue kvy = new KeyValue(circle.centerYProperty(), FieldY());
+        KeyFrame kfy = new KeyFrame(Duration.millis(90), kvy);
+        timeline.getKeyFrames().add(kfy);
+
+        timeline.play();
+
     }
     @Override
     public boolean equals(Object o) {

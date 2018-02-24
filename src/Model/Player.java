@@ -37,7 +37,6 @@ public class Player implements Runnable {
         int i = 0;
         while (true) {
             i++;
-            if (i > 15) ball.circle.setRadius(100);
             try { if(i < 2)
                 Thread.sleep(timeToSleep);
             } catch (InterruptedException e) {
@@ -65,17 +64,16 @@ public class Player implements Runnable {
             try {
                 locker.lock();
                 if (field.Exist(cl)) {
-                    //locker.unlock();
                     continue;
                 }
                 ball.ChangeState(cl);
+                ball.AnimationMove();
             } finally {
                 locker.unlock();
             }
             i = 0;
 
             // make move
-            ball.AnimationMove();
         }
     }
 
@@ -88,7 +86,7 @@ public class Player implements Runnable {
     //Случайная скорость
     public int GetRandomRate() {
         Random r = new Random();
-        return new int[]{100, 200, 300, 400, 500}[r.nextInt(5)];
+        return new int[]{150, 200, 300, 400, 500}[r.nextInt(5)];
     }
 
 }
