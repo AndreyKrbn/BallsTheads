@@ -63,18 +63,24 @@ public class Ball {
     public void AnimationMove(){
 /*        circle.setCenterX(FieldX());
         circle.setCenterY(FieldY());*/
+
         Timeline timeline = new Timeline();
-        timeline.setCycleCount(1);
+        try {
+            timeline.setCycleCount(1);
 
-        KeyValue kvx = new KeyValue(circle.centerXProperty(), FieldX());
-        KeyFrame kfx = new KeyFrame(Duration.millis(90), kvx);
-        timeline.getKeyFrames().add(kfx);
+            KeyValue kvx = new KeyValue(circle.centerXProperty(), FieldX());
+            KeyFrame kfx = new KeyFrame(Duration.millis(90), kvx);
+            timeline.getKeyFrames().add(kfx);
 
-        KeyValue kvy = new KeyValue(circle.centerYProperty(), FieldY());
-        KeyFrame kfy = new KeyFrame(Duration.millis(90), kvy);
-        timeline.getKeyFrames().add(kfy);
+            KeyValue kvy = new KeyValue(circle.centerYProperty(), FieldY());
+            KeyFrame kfy = new KeyFrame(Duration.millis(90), kvy);
+            timeline.getKeyFrames().add(kfy);
 
-        timeline.play();
+            timeline.play();
+        }
+        catch (Exception e){
+            timeline.stop();
+        }
 
     }
     @Override
