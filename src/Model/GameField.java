@@ -35,4 +35,10 @@ public class GameField {
         }
         return false;
     }
+
+    public void Display(){
+        for (Ball i: balls) {
+            i.AnimationMove();
+        }
+    }
 }

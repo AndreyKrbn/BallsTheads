@@ -1,5 +1,8 @@
 package Model;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -19,10 +22,12 @@ public class Player implements Runnable {
     GameField field;
     long timeToSleep;
     ReentrantLock locker;
+    final static Queue<Integer> ratesQueue = new LinkedList<Integer>(Arrays.asList(new Integer[] {100, 200, 300, 400, 500}));
+    //final static Queue<Integer> ratesQueue = new LinkedList<Integer>(Arrays.asList(new Integer[] {0}));
 
     public Player(GameField field, ReentrantLock lock) {
         this.field = field;
-        this.timeToSleep = GetRandomRate();
+        this.timeToSleep = GetNextRate();
         this.locker = lock;
         while (!this.field.Add(getNewBall(field))) ;
     }
@@ -62,18 +67,17 @@ public class Player implements Runnable {
                     break;
             }
             try {
+                //make Move
                 locker.lock();
                 if (field.Exist(cl)) {
                     continue;
                 }
                 ball.ChangeState(cl);
-                ball.AnimationMove();
+                //ball.AnimationMove();
             } finally {
                 locker.unlock();
             }
             i = 0;
-
-            // make move
         }
     }
 
@@ -83,10 +87,11 @@ public class Player implements Runnable {
         return Direction.values()[r.nextInt(4)];
     }
 
-    //Случайная скорость
-    public int GetRandomRate() {
-        Random r = new Random();
-        return new int[]{150, 200, 300, 400, 500}[r.nextInt(5)];
+    //Cкорость
+    public static int GetNextRate() {
+        Integer i= ratesQueue.poll();
+        ratesQueue.add(i);
+        return i;
     }
 
 }

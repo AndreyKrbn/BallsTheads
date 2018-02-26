@@ -3,6 +3,8 @@ package Model;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -19,18 +21,18 @@ enum BallColor{
     RED,
     BROWN,
     GREEN,
-    GOLD
+    GOLD,
+    AQUA,
+    ORANGE,
+    GRAY,
+    PINK
 }
 
 public class Ball {
 
-    int positionX;
-    int positionY;
-    static Queue<BallColor> BallColorQueue;
-    static{
-        BallColorQueue = new LinkedList<BallColor>();
-        BallColorQueue.addAll(Arrays.asList(BallColor.values()));
-    }
+   volatile int positionX;
+   volatile int positionY;
+    final static Queue<BallColor> BallColorQueue = new LinkedList<BallColor>(Arrays.asList(BallColor.values()));
 
     public Circle getCircle() {
         return circle;
@@ -45,43 +47,53 @@ public class Ball {
 
     public Ball(int positionX, int positionY, boolean withCircle) {
         this(positionX, positionY);
-        if(withCircle) {
-            BallColor bc = BallColorQueue.poll();
-            this.circle = new Circle(FieldX(), FieldY(), 25, Color.valueOf(bc.toString()));
-            BallColorQueue.add(bc);
-        }
+        if (withCircle)
+            this.circle = new Circle(FieldX(), FieldY(), 25, Color.valueOf(getNextColor()));
     }
 
-    private int FieldX(){
-        return 50*positionX-25;
+    private int FieldX() {
+        return 50 * positionX - 25;
     }
 
-    private int FieldY(){
-        return 50*positionY-25;
+    private int FieldY() {
+        return 50 * positionY - 25;
     }
 
-    public void AnimationMove(){
-/*        circle.setCenterX(FieldX());
-        circle.setCenterY(FieldY());*/
+    private static String getNextColor() {
+        BallColor bc = BallColorQueue.poll();
+        BallColorQueue.add(bc);
+        return bc.toString();
+    }
+
+/*    public void NewPosition() {
+        circle.setCenterX(FieldX());
+        circle.setCenterY(FieldY());
+    }*/
+    public synchronized void AnimationMove() {
 
         Timeline timeline = new Timeline();
+
+        timeline.setCycleCount(1);
+
+        KeyValue kvx = new KeyValue(circle.centerXProperty(), FieldX());
+        KeyFrame kfx = new KeyFrame(Duration.millis(1), kvx);
+        timeline.getKeyFrames().add(kfx);
+
+        KeyValue kvy = new KeyValue(circle.centerYProperty(), FieldY());
+        KeyFrame kfy = new KeyFrame(Duration.millis(1), kvy);
+
+        timeline.getKeyFrames().add(kfy);
+        timeline.setOnFinished(new AnimationEventHandler(this));
+        timeline.play();
+
         try {
-            timeline.setCycleCount(1);
-
-            KeyValue kvx = new KeyValue(circle.centerXProperty(), FieldX());
-            KeyFrame kfx = new KeyFrame(Duration.millis(90), kvx);
-            timeline.getKeyFrames().add(kfx);
-
-            KeyValue kvy = new KeyValue(circle.centerYProperty(), FieldY());
-            KeyFrame kfy = new KeyFrame(Duration.millis(90), kvy);
-            timeline.getKeyFrames().add(kfy);
-
-            timeline.play();
+            this.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        catch (Exception e){
-            timeline.stop();
-        }
-
+    }
+    public synchronized void JoinAnimation(){
+        this.notify();
     }
     @Override
     public boolean equals(Object o) {
@@ -98,15 +110,16 @@ public class Ball {
     public int hashCode() {
         int result = positionX;
         result = 31 * result + positionY;
-        return result;
+        //return result;
+        return 1;
     }
 
-    public Ball clone()  {
+    public Ball clone() {
         return new Ball(this.positionX, this.positionY);
     }
 
-    public void ChangeState(Ball ball){
+    public void ChangeState(Ball ball) {
         this.positionX = ball.positionX;
-        this.positionY= ball.positionY;
+        this.positionY = ball.positionY;
     }
 }
