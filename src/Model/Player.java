@@ -73,7 +73,6 @@ public class Player implements Runnable {
                     continue;
                 }
                 ball.ChangeState(cl);
-                //ball.AnimationMove();
             } finally {
                 locker.unlock();
             }

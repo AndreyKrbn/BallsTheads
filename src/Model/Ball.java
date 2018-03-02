@@ -3,18 +3,13 @@ package Model;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
-
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static java.lang.Math.random;
 
 enum BallColor{
     BLUE,
@@ -65,36 +60,34 @@ public class Ball {
         return bc.toString();
     }
 
-/*    public void NewPosition() {
-        circle.setCenterX(FieldX());
-        circle.setCenterY(FieldY());
-    }*/
-    public synchronized void AnimationMove() {
+    public void AnimationMove() {
 
         Timeline timeline = new Timeline();
 
         timeline.setCycleCount(1);
 
         KeyValue kvx = new KeyValue(circle.centerXProperty(), FieldX());
-        KeyFrame kfx = new KeyFrame(Duration.millis(1), kvx);
+        KeyFrame kfx = new KeyFrame(Duration.millis(5), kvx);
         timeline.getKeyFrames().add(kfx);
 
         KeyValue kvy = new KeyValue(circle.centerYProperty(), FieldY());
-        KeyFrame kfy = new KeyFrame(Duration.millis(1), kvy);
+        KeyFrame kfy = new KeyFrame(Duration.millis(5), kvy);
 
         timeline.getKeyFrames().add(kfy);
-        timeline.setOnFinished(new AnimationEventHandler(this));
+        //timeline.setOnFinished((v)-> this.JoinAnimation());
         timeline.play();
 
-        try {
+/*        try {
             this.wait();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
     }
-    public synchronized void JoinAnimation(){
+
+/*    public synchronized void JoinAnimation(){
         this.notify();
-    }
+    }*/
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

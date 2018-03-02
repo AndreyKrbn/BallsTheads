@@ -1,17 +1,14 @@
 package sample;
 
-import Model.DisplayTimeTask;
 import Model.GameField;
 import Model.Player;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 import java.util.Timer;
@@ -66,7 +63,16 @@ public class Main extends Application {
         (new Thread(p9)).start();
 
         Timer timer = new Timer();
-        timer.schedule(new DisplayTimeTask(field), 0, 10);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(() -> {
+                    locker.lock();
+                    field.Display();
+                    locker.unlock();
+                });
+            }
+        }, 0, 10);
     }
 
     public static void main(String[] args) {

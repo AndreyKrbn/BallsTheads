@@ -22,7 +22,7 @@ public class GameField {
         this.balls = new HashSet<Ball>();
     }
 
-    public synchronized boolean Add(Ball ball)
+    public boolean Add(Ball ball)
     {
         return balls.add(ball);
     }
